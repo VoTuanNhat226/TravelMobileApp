@@ -11,8 +11,8 @@ export default StyleSheet.create({
         marginBottom: 15
     },
     avatar: {
-        width: 200,
-        height: 200, 
+        width: 365,
+        height: 195, 
         margin: 'auto'
     },
     textInput: {
@@ -43,7 +43,7 @@ export default StyleSheet.create({
         backgroundColor: '#444444'
     },
     btnPickAvatar: {
-        marginTop: 30,
+        marginTop: 20,
         marginLeft: 20,
         textAlign: 'center',
         minHeight: 50,

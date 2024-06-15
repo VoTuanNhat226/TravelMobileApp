@@ -18,9 +18,11 @@ const TripDetail = ({route}) => {
     const [comment, setComment] = useState('')
     const [content, setContent] = useState('')
     const [isChecked, setIsChecked] = useState(false)
+    const [checkedItems, setCheckedItems] = useState([]);
     const nav = useNavigation()
     const commentInputRef = useRef(null);
     const user = useContext(MyUserContext)
+
     
     const [showPar, setShowPar] = useState(false);
     const togglePar = () => {
@@ -55,7 +57,7 @@ const TripDetail = ({route}) => {
     }
     useEffect(() => {
         loadComments()
-    },)
+    }, [])
 
     // const handlePlaceDetail = (placeId) => {
     //         nav.navigate('Places', {'placeId' : placeId})
@@ -65,7 +67,7 @@ const TripDetail = ({route}) => {
         try {
             if(user) {
                 if (!comment) {
-                    Alert.alert('Notification', 'There are no comments yet!');
+                    Alert.alert('Notification', 'There are no comments yet');
                     return;
                 } else {
                     try {
@@ -88,7 +90,7 @@ const TripDetail = ({route}) => {
             } else {
                 Alert.alert(
                 'Notification',
-                'You need to login!',
+                'You need to login.',
                 [
                     {
                     text: 'OK',
@@ -206,7 +208,7 @@ const TripDetail = ({route}) => {
                                             {tripDetail===null?<></>: <>
                                                 {user && user.id === tripDetail.user.id && (
                                                 <View>
-                                                    <Checkbox value={isChecked} onValueChange={() => setIsChecked(!isChecked)} style={TripDetailStyle.cmtCheck} color='#444444'/>
+                                                    <Checkbox key={c.user.id} value={isChecked} onValueChange={() => setIsChecked(!isChecked)} style={TripDetailStyle.cmtCheck} color='#444444'/>
                                                 </View>
                                            )}
                                             </>}

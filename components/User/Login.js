@@ -2,8 +2,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import axios from 'axios'
 
 import { useNavigation } from '@react-navigation/native'
-import React, { useContext, useState } from 'react'
-import { KeyboardAvoidingView, Platform, ScrollView, Text, Touchable, View } from 'react-native'
+import React, { useContext, useEffect, useState } from 'react'
+import { Alert, KeyboardAvoidingView, Platform, ScrollView, Text, Touchable, View } from 'react-native'
 import { Button, TextInput, TouchableRipple } from 'react-native-paper'
 
 import UserStyle from './UserStyle'
@@ -13,9 +13,8 @@ import { MyDispatchContext } from '../../configs/Context'
 import { LogBox } from 'react-native';
 
 const Login = () => {
-    // LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
-    // LogBox.ignoreAllLogs();//Ignore all log notifications
-
+    LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
+    LogBox.ignoreAllLogs();//Ignore all log notifications
 
     const fields = [
         {
@@ -66,6 +65,7 @@ const Login = () => {
             }, 100);
         } catch (error) {
             console.error(error)
+            Alert.alert('Warning', 'Invalid username or password')
         } finally {
             setLoading(false)
         }

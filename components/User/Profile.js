@@ -41,17 +41,16 @@ const Profile = () => {
         </View>
         <View>
           <Text style={[TripDetailStyle.title, {marginLeft:20} ]}>Your trip:</Text>
-          {trips === null ? <></>:<>
+          {/* {trips === null ? <></>:<>
             {trips.map(t => <>
               {user.id === t.user.id?<>
                 <TouchableRipple key={t.id} onPress={() => toTripDetail(t.id)}>
                   <List.Item title={t.title} description={t.created_date?moment(t.created_date).fromNow():""} left={() => <Image style={UserStyle.yourTripImg} source={{uri: t.image}}/>}/>
                 </TouchableRipple>
               </>:<>
-                
               </>}
             </>)}
-          </>}
+          </>} */}
         </View>
       </ScrollView>
     </View>

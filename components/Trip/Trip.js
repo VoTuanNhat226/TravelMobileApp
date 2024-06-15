@@ -82,7 +82,7 @@ const Trip = ({navigation}) => {
         else {
             Alert.alert(
             'Notification',
-            'You need to login!',
+            'You need to login',
             [
                 {
                 text: 'OK',
@@ -101,15 +101,16 @@ const Trip = ({navigation}) => {
     return (
         <View>
             <View>
-                {posts===null?<ActivityIndicator/>:<>
+                {posts===null?<></>:<>
                     {posts.map((p) => <Chip style={TripStyle.postChip} key={p.id} onPress={() => search(p.id, setPostID)}></Chip>)}
                 </>}
             </View>
-            <TouchableOpacity onPress={toAddTrip}>
-                   <Text>Create a trip</Text>
+            <TouchableOpacity onPress={toAddTrip} style={TripStyle.addTrip}>
+                   {/* <Text style={{color: 'white', margin: 'auto', fontSize: 17}}>Create a trip</Text> */}
+                   <Button icon='plus'><Text style={{color: 'white', margin: 'auto'}}>Create a trip</Text></Button>
             </TouchableOpacity>
             <View>
-                <Searchbar style={TripStyle.searchInput} placeholder='Nhập từ khóa...' onChangeText={setQ} value={q}/>
+                <Searchbar style={TripStyle.searchInput} placeholder='Enter keywords...' onChangeText={setQ} value={q}/>
             </View>
             <ScrollView onScroll={loadMoreTrip} contentInsetAdjustmentBehavior="automatic" >
                 <RefreshControl onRefresh={() => loadTrips()}/>

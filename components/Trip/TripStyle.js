@@ -16,8 +16,8 @@ export default StyleSheet.create({
     searchInput: {
         backgroundColor: '#EEEEEE',
         marginTop: 15,
-        marginLeft: 10,
-        marginRight: 10,
+        marginLeft: 20,
+        marginRight: 20,
         borderWidth: 1,
         borderColor: '#BBBBBB',
         paddingHorizontal: 10
@@ -31,5 +31,46 @@ export default StyleSheet.create({
     picker: {
         width: 200,
         height: 100
+    },
+    input: {
+        width: '100%',
+        height: 50,
+        borderWidth: 1,
+        borderColor: '#ccc',
+        borderRadius: 5,
+        paddingHorizontal: 10,
+        marginBottom: 10,
+    },
+    btnPickAvatar: {
+        marginTop: 30,
+        marginLeft: 20,
+        marginBottom: 0,
+        textAlign: 'center',
+        minHeight: 50,
+        color: '#444444',
+        fontSize: 16
+    },
+    addTrip: {
+        marginLeft: 20,
+        marginTop: 20,
+        marginRight: 20,
+        borderRadius: 10,
+        height: 40,
+        backgroundColor: '#444444'
+    },
+    imageTrip: {
+        width: 365,
+        height: 195, 
+        margin: 'auto'
+    },
+    borderChooseAvatar: {
+        width: 370, 
+        height: 50, 
+        borderWidth: 1, 
+        borderColor: '#BBBBBB', 
+        marginLeft: 20, 
+        marginBottom: 10, 
+        borderRadius: 20, 
+        backgroundColor: '#DDDDDD'
     }
 })

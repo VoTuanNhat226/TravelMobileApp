@@ -6,6 +6,7 @@ const BASE_URL = 'https://sonduy.pythonanywhere.com/'
 export const endpoints = {
     'posts': '/posts/',
     'trips': '/trips/',
+    'places': '/places/',
     'tripsDetail': (tripId) => `/trips/${tripId}/`,
     'comments': (tripId) => `/trips/${tripId}/get_comments/`,
     'postComment': (tripId) => `/trips/${tripId}/comments/`,
