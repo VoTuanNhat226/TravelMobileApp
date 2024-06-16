@@ -54,7 +54,7 @@ export default StyleSheet.create({
         marginTop: 100
     },
     marginTopLogin: {
-        marginTop: 200
+        marginTop: 150
     },
     btnToRegister: {
         marginTop: 20,

@@ -26,11 +26,12 @@ const AddTrip = () => {
 
     const [title, setTitle] = useState('');
     const [image, setImage] = useState({})
+    const [selectedImage, setSelectedImage] = useState(null);  
     const [description, setDescription] = useState('');
     const [timeStart, setTimeStart] = useState('');
     const [timeFinish, setTimeFinish] = useState('');
     
-    const [user, setUser] = useState()
+    const [user, setUser] = useState({})
     const userAuth = useContext(MyUserContext)
 
     const [post, setPost] = useState(null);
@@ -38,7 +39,7 @@ const AddTrip = () => {
 
     const [client, setClient] = useState([])
 
-    const [place, setPlace] = useState(null);
+    const [place, setPlace] = useState([]);
     const [places, setPlaces] = useState([])
  
     const [loading, setLoading] = useState(false)
@@ -59,10 +60,13 @@ const AddTrip = () => {
             setLoading(false)
         }
     }
+    const changePost = (field, value) => {
+      setPost(value)
+    };
     useEffect(() => {
         loadPost()
-    }, [])
-
+      }, [])
+      
     //function load tất cả cái place để người dùng chọn
     const loadPlace = async () => {
       try {
@@ -95,10 +99,19 @@ const AddTrip = () => {
         return { ...current, [field]: value };
       });
     };
+    // const picker = async () => {
+    //   let result = await ImagePicker.launchImageLibraryAsync({
+    //       mediaTypes: ImagePicker.MediaTypeOptions.Images,
+    //       allowsEditing: true,
+    //       aspect: [4, 3],
+    //       quality: 1,
+    //   });
 
-    const changePost = (field, value) => {
-      setPost(value)
-    };
+    //   if (!result.canceled) {
+    //       setSelectedImage(result.assets[0].uri); 
+    //   }
+    // };
+
 
     //function hiện picker startTime
     const showStartDatePicker = () => {
@@ -141,27 +154,32 @@ const AddTrip = () => {
     const handleCreateTrip = async () => {
       setLoading(true);
       try {
-        // console.log(userAuth)
+        setImage(image.image.uri)
+        let formTrip = new FormData()
+          formTrip.append('title', title);
+          formTrip.append('image', {
+            uri: image,
+            name: image.image.fileName,
+            type: image.image.mineType
+          })
+          formTrip.append('description', description);
+          formTrip.append('time_start', timeStart);
+          formTrip.append('time_finish', timeFinish);
+          formTrip.append('user', userAuth);
+          formTrip.append('post', post);
+          formTrip.append('client', client);
+          formTrip.append('place', place);
         let acessToken = await AsyncStorage.getItem("acess-token")
-        let res = await authAPI(acessToken).post(endpoints['trips'], {
-            'title': title,
-            'image': image,
-            'description': description,
-            'time_start': timeStart,
-            'time_finish': timeFinish,
-            'user': userAuth,
-            'post': post,
-            'client': client,
-            'place': place
-          }, {
+        let res = await authAPI(acessToken).post(endpoints['trips'], formTrip, {
             headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${acessToken}`
+              'Content-Type': 'multipart/form-data',
+               Authorization: `Bearer ${acessToken}`
             }
           })
           if (res.status === 201) {
             Alert.alert('Notification', 'Create success');
           }
+        // console.log(image.image.name)
       } catch (error) {
         console.error(error)
         Alert.alert('Warning!', error.message);
@@ -224,7 +242,7 @@ const AddTrip = () => {
                 <Text style={{marginLeft: 20, marginTop: 20, fontSize: 20, fontWeight: 'bold'}}>Choose post:</Text>
                 <Picker selectedValue={post} onValueChange={(itemValue) => changePost('post', itemValue)}>
                   {posts.map((post) => (
-                    <Picker.Item key={post.id} label={post.title} value={post.title} />
+                    <Picker.Item key={post.id} label={post.title} value={post.id} />
                   ))}
                 </Picker>
             </View>

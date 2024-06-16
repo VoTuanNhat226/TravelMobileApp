@@ -6,15 +6,19 @@ const BASE_URL = 'https://sonduy.pythonanywhere.com/'
 export const endpoints = {
     'posts': '/posts/',
     'trips': '/trips/',
-    'places': '/places/',
+    'add_trip':'trips/add_trip/',
     'tripsDetail': (tripId) => `/trips/${tripId}/`,
+    'getTripOnwer': (userId) => `/users/${userId}/get_trips/`,
+    'places': '/places/',
     'comments': (tripId) => `/trips/${tripId}/get_comments/`,
     'postComment': (tripId) => `/trips/${tripId}/comments/`,
     'register': '/users/',
     'login': '/o/token/',
     'current_user': '/users/current_user/',
-    'placeDetail': (placeID) => `/places/${placeID}/`
-}
+    'placeDetail': (placeID) => `/places/${placeID}/`,
+    'like': (tripId) => `/trips/${tripId}/like/`,
+    'ratings' :(tripId) => `trips/${tripId}/ratings/`
+}   
 
 export const authAPI = (accessToken) => {
     return axios.create({

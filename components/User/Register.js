@@ -101,8 +101,9 @@ const Register = () => {
             "Content-Type": "multipart/form-data",
           },
         });
-        if (res.status === 201) 
+        if (res.status === 201) {
             nav.navigate("Login");
+        }
       } catch (error) {
         console.error(error);
       } finally {

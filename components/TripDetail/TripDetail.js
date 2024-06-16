@@ -1,3 +1,4 @@
+
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import { ActivityIndicator, Alert, Image, KeyboardAvoidingView, Platform, RefreshControl, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import APIs, { authAPI, endpoints } from '../../configs/APIs'
@@ -74,6 +75,11 @@ const TripDetail = ({route}) => {
                         let acessToken = await AsyncStorage.getItem("acess-token")
                         let res = await authAPI(acessToken).post(endpoints['postComment'](tripId), {
                             'content': content
+                        }, {
+                            headers: {
+                                'Content-Type': 'multipart/form-data',
+                                 Authorization: `Bearer ${acessToken}`
+                              }
                         })
                         setComments(current => {
                             return [res.data, ...current]
@@ -84,6 +90,7 @@ const TripDetail = ({route}) => {
                         commentInputRef.current.focus();
                     } catch (error) {
                         console.error(error)
+                        Alert.alert('Warning!', error.message )
                     }
                 }
 

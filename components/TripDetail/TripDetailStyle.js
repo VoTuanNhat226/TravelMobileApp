@@ -1,5 +1,6 @@
 import { StyleSheet } from "react-native";
 
+
 export default StyleSheet.create({
     img: {
         width: 370,
@@ -8,6 +9,7 @@ export default StyleSheet.create({
     },
     margin: {
         margin: 20,
+        marginTop: 0
     },
     title: {
         marginTop: 10,
@@ -96,4 +98,23 @@ export default StyleSheet.create({
         width: 30,
         height: 30,
     },
+
+    option: {
+        fontSize: 20,
+        width: 100,
+        height: 40,
+        marginTop: 20
+    },
+    icon : {
+        
+        marginLeft: 20
+    },
+    like : {
+        fontSize: 20,
+        fontWeight: 'bold',
+        backgroundColor: 'cyan',
+        width: 60,
+        height: 40,
+        textAlign: 'center'
+    }
 })
