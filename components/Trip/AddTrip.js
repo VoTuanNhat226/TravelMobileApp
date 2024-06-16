@@ -25,94 +25,31 @@ const AddTrip = () => {
     LogBox.ignoreAllLogs();//Ignore all log notifications
 
     const [title, setTitle] = useState('');
+    
     const [image, setImage] = useState({})
-    const [selectedImage, setSelectedImage] = useState(null);  
+    const [selectedImage, setSelectedImage] = useState({});  
+
     const [description, setDescription] = useState('');
     const [timeStart, setTimeStart] = useState('');
     const [timeFinish, setTimeFinish] = useState('');
     
     const [user, setUser] = useState({})
     const userAuth = useContext(MyUserContext)
-
-    const [post, setPost] = useState(null);
+    
+    const [post, setPost] = useState(1);
     const [posts, setPosts] = useState([])
 
     const [client, setClient] = useState([])
-
+    
     const [place, setPlace] = useState([]);
     const [places, setPlaces] = useState([])
- 
+    
     const [loading, setLoading] = useState(false)
     const nav = useNavigation()
     
     const [isTimeStartPickerVisible, setIsTimeStartPickerVisibility] = useState(false); //state hiện picker startTime
     const [isTimeFinishPickerVisible, setIsTimeFinishPickerVisibility] = useState(false); //state hiện picker finishTime
     
-    //function load tất cả cái post để người dùng chọn
-    const loadPost = async () => {
-        try {
-          setLoading(true)  
-          let res = await APIs.get(endpoints['posts'])
-          setPosts(res.data.results)
-        } catch (error) {
-            console.error(error)
-        } finally {
-            setLoading(false)
-        }
-    }
-    const changePost = (field, value) => {
-      setPost(value)
-    };
-    useEffect(() => {
-        loadPost()
-      }, [])
-      
-    //function load tất cả cái place để người dùng chọn
-    const loadPlace = async () => {
-      try {
-        setLoading(true)  
-          let res = await APIs.get(endpoints['places'])
-          setPlaces(res.data.results)
-      } catch (error) {
-        console.log(error)
-      } finally {
-        setLoading(false)
-      }
-    }
-    useEffect(() => {
-      loadPlace()
-    }, [])
-
-    //Function chọn ảnh cho Trip
-    const picker = async () => {
-      const {status} = await ImagePicker.requestMediaLibraryPermissionsAsync()
-        if (status !== 'granted') 
-            Alert.alert("TripApp", "Permissions Denied!")
-        else {
-            let res = await ImagePicker.launchImageLibraryAsync()
-            if (!res.canceled)
-                changeImage('image', res.assets[0])
-        }
-    }
-    const changeImage = (field, value) => {
-      setImage((current) => {
-        return { ...current, [field]: value };
-      });
-    };
-    // const picker = async () => {
-    //   let result = await ImagePicker.launchImageLibraryAsync({
-    //       mediaTypes: ImagePicker.MediaTypeOptions.Images,
-    //       allowsEditing: true,
-    //       aspect: [4, 3],
-    //       quality: 1,
-    //   });
-
-    //   if (!result.canceled) {
-    //       setSelectedImage(result.assets[0].uri); 
-    //   }
-    // };
-
-
     //function hiện picker startTime
     const showStartDatePicker = () => {
       setIsTimeStartPickerVisibility(true)
@@ -129,57 +66,115 @@ const AddTrip = () => {
     const hideFinishDatePicker = () => {
       setIsTimeFinishPickerVisibility(false)
     };
-
     //function confirm timeStart
     const handleConfirmTimeStart = (date) => {
+      date = formatStartDate(date)
       setTimeStart(date)
       console.log('Time start', timeStart)
       hideStartDatePicker();
     };
     //function confirm finishStart
     const handleConfirmTimeFinish = (date) => {
+      date = formatFinishDate(date)
       setTimeFinish(date)
       console.log('Time finish', timeFinish)
       hideFinishDatePicker();
     };
-
-
     const formatStartDate = (date) => {
-        return moment(date).format('DD/MM/YYYY');
+        return moment(date).format('YYYY-MM-DD');
     };
     const formatFinishDate = (date) => {
-      return moment(date).format('DD/MM/YYYY');
+      return moment(date).format('YYYY-MM-DD');
+    };
+
+    //function load tất cả cái post để người dùng chọn
+    const loadPost = async () => {
+      try {
+          setLoading(true)  
+          let res = await APIs.get(endpoints['posts'])
+          setPosts(res.data.results)
+        } catch (error) {
+          console.error(error)
+        } finally {
+          setLoading(false)
+        }
+      }
+    const changePost = (field, value) => {
+      setPost(value)
+    };
+    useEffect(() => {
+      loadPost()
+    }, [])
+    
+    //function load tất cả cái place để người dùng chọn
+    const loadPlace = async () => {
+      try {
+        setLoading(true)  
+        let res = await APIs.get(endpoints['places'])
+        setPlaces(res.data.results)
+      } catch (error) {
+        console.log(error)
+      } finally {
+        setLoading(false)
+      }
+    }
+    useEffect(() => {
+      loadPlace()
+    }, [])
+
+    const picker = async () => {
+      const {status} = await ImagePicker.requestMediaLibraryPermissionsAsync()
+        if (status !== 'granted') 
+            Alert.alert("TripApp", "Permissions Denied!")
+        else {
+            let res = await ImagePicker.launchImageLibraryAsync({
+              mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            })
+            if (!res.canceled){
+              setSelectedImage(res.assets[0].uri)
+              changeImage("image", {
+                uri: res.assets[0].uri,
+                type: res.assets[0].type,
+                name: res.assets[0].fileName
+              })
+            }
+        }
+    };
+    const changeImage = (field, value) => {
+      setImage((current) => {
+        return { ...current, [field]: value };
+      });
     };
 
     const handleCreateTrip = async () => {
       setLoading(true);
       try {
-        setImage(image.image.uri)
         let formTrip = new FormData()
           formTrip.append('title', title);
-          formTrip.append('image', {
-            uri: image,
-            name: image.image.fileName,
-            type: image.image.mineType
-          })
-          formTrip.append('description', description);
-          formTrip.append('time_start', timeStart);
-          formTrip.append('time_finish', timeFinish);
-          formTrip.append('user', userAuth);
+          // formTrip.append('image', {
+          //   uri: selectedImage,
+          //   name: image.image.name,
+          //   type: image.image.type
+          // })
+          // formTrip.append('description', description);
+          // formTrip.append('time_start', timeStart);
+          // formTrip.append('time_finish', timeFinish);
+          // formTrip.append('user', userAuth);
           formTrip.append('post', post);
-          formTrip.append('client', client);
-          formTrip.append('place', place);
+          // formTrip.append('client', client);
+          // formTrip.append('place', place);
+          console.log(formTrip)
         let acessToken = await AsyncStorage.getItem("acess-token")
         let res = await authAPI(acessToken).post(endpoints['trips'], formTrip, {
             headers: {
               'Content-Type': 'multipart/form-data',
-               Authorization: `Bearer ${acessToken}`
+              //  Authorization: `Bearer ${acessToken}`
             }
           })
           if (res.status === 201) {
             Alert.alert('Notification', 'Create success');
+            nav.navigate('Trip')
           }
-        // console.log(image.image.name)
       } catch (error) {
         console.error(error)
         Alert.alert('Warning!', error.message);
@@ -254,7 +249,7 @@ const AddTrip = () => {
                   </TouchableRipple>
                 </View>
                 <View style={{width: 370, height: 200, borderWidth: 1, borderColor: '#444444', marginLeft: 20}}>
-                  {image.image && <Image style={TripStyle.imageTrip} source={{uri: image.image.uri}}/>}
+                  {selectedImage && <Image style={TripStyle.imageTrip} source={{uri: selectedImage}}/>}
                 </View>
             </View>
             {/* Button tạo trip */}

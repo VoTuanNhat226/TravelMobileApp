@@ -6,7 +6,7 @@ const BASE_URL = 'https://sonduy.pythonanywhere.com/'
 export const endpoints = {
     'posts': '/posts/',
     'trips': '/trips/',
-    'add_trip':'trips/add_trip/',
+    'add_trip':'/trips/add_trip/',
     'tripsDetail': (tripId) => `/trips/${tripId}/`,
     'getTripOnwer': (userId) => `/users/${userId}/get_trips/`,
     'places': '/places/',
@@ -24,7 +24,8 @@ export const authAPI = (accessToken) => {
     return axios.create({
         baseURL: BASE_URL,
         headers: {
-            'Authorization': `Bearer ${accessToken===null?AsyncStorage.getItem("acess-token"):accessToken}`
+            // 'Authorization': `Bearer ${accessToken===null?AsyncStorage.getItem("acess-token"):accessToken}`
+            'Authorization': `Bearer ${accessToken}`
         }
     });
 }

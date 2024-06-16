@@ -6,7 +6,7 @@ import TripDetailStyle from './TripDetailStyle'
 import Style from '../../Style/Style'
 import { useNavigation } from '@react-navigation/native'
 import UserStyle from '../User/UserStyle'
-import { Button } from 'react-native-paper'
+import { Button, Icon } from 'react-native-paper'
 import moment from 'moment'
 import { MyUserContext } from '../../configs/Context'
 import AsyncStorage from '@react-native-async-storage/async-storage'
@@ -20,6 +20,7 @@ const TripDetail = ({route}) => {
     const [content, setContent] = useState('')
     const [isChecked, setIsChecked] = useState(false)
     const [checkedItems, setCheckedItems] = useState([]);
+    const [isLiked, setIsLiked] = useState(false)
     const nav = useNavigation()
     const commentInputRef = useRef(null);
     const user = useContext(MyUserContext)
@@ -111,14 +112,56 @@ const TripDetail = ({route}) => {
             console.error(error)
         }
     }
+
+    const handleLike = async (tripID) => {
+      try {
+        if (user) {
+            try {
+                setIsLiked(!isLiked)
+                let acessToken = await AsyncStorage.getItem("acess-token")
+                let res = await authAPI(acessToken).post(endpoints['like'](tripId), {
+                    'liked': isLiked
+                })
+                console.log(isLiked)
+            } catch (error) {
+                console.error(error)
+            }
+        } else {
+            Alert.alert(
+                'Notification',
+                'You need to login.',
+                [
+                    {
+                    text: 'OK',
+                    onPress: () => nav.navigate('Login'),
+                    },
+                ],
+                { cancelable: false }
+                );
+        }
+      } catch (error) {
+        console.error(error)
+      }
+    }
     
 
     return (
         <View>
             <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
                 <ScrollView style={TripDetailStyle.margin}>
+                           
                         <View>
                             {tripDetail===null? <ActivityIndicator/> : <>
+                                <View>
+                                <TouchableOpacity style={{width: 50, height: 50}} onPress={handleLike}>
+                                    <Icon
+                                        source="heart"
+                                        color={isLiked ? "#FF0000" : "#C0C0C0"}
+                                        size={50}
+                                    />
+                                </TouchableOpacity>
+                            </View>
+
                                     {/* Hình và title Trip */}
                                     <View key={tripDetail.id}>
                                         <Image style={TripDetailStyle.img} source={{uri: tripDetail.image}}/>
