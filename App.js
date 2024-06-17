@@ -18,6 +18,7 @@ import Places from "./components/Places/Places"
 
 import { MyDispatchContext, MyUserContext } from "./configs/Context";
 import MyUserReducer from "./configs/Reducers";
+import UpdateTrip from "./components/Trip/UpdateTrip";
 
 const Stack = createStackNavigator();
 
@@ -27,6 +28,7 @@ const MyStack = () => {
       <Stack.Screen name="Trip" component={Trip}/>
       <Stack.Screen name="Detail" component={TripDetail} />
       <Stack.Screen name="AddTrip" component={AddTrip} />
+      <Stack.Screen name="UpdateTrip" component={UpdateTrip} />     
       <Stack.Screen name="Login" component={Login} />     
 
     </Stack.Navigator>

@@ -17,15 +17,17 @@ export const endpoints = {
     'current_user': '/users/current_user/',
     'placeDetail': (placeID) => `/places/${placeID}/`,
     'like': (tripId) => `/trips/${tripId}/like/`,
-    'ratings' :(tripId) => `trips/${tripId}/ratings/`
+    'check_liked' : (tripId) => `/trips/${tripId}/check_liked/`,
+    'ratings' :(tripId) => `trips/${tripId}/ratings/`,
+    'report': (userId) => `/users/${userId}/report/`
 }   
 
 export const authAPI = (accessToken) => {
     return axios.create({
         baseURL: BASE_URL,
         headers: {
-            // 'Authorization': `Bearer ${accessToken===null?AsyncStorage.getItem("acess-token"):accessToken}`
-            'Authorization': `Bearer ${accessToken}`
+            'Authorization': `Bearer ${accessToken===null?AsyncStorage.getItem("acess-token"):accessToken}`
+            // 'Authorization': `Bearer ${accessToken}`
         }
     });
 }

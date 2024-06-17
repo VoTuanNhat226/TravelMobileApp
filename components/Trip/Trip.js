@@ -16,7 +16,6 @@ const Trip = ({navigation}) => {
     const [page, setPage] = useState(1);
     const user = useContext(MyUserContext)
 
-
     const loadPosts = async () => {
         try {
             let res = await APIs.get(endpoints['posts'])
@@ -52,7 +51,7 @@ const Trip = ({navigation}) => {
     }
     useEffect(() => {
         loadTrips()
-    }, [q, postID, page])
+    }, [q, postID, page, trips])
     
     const isCloseToBottom = ({layoutMeasurement,contentOffset, contentSize}) => {
         const paddingToBottom = 20;
@@ -112,7 +111,7 @@ const Trip = ({navigation}) => {
             <View>
                 <Searchbar style={TripStyle.searchInput} placeholder='Enter keywords...' onChangeText={setQ} value={q}/>
             </View>
-            <ScrollView onScroll={loadMoreTrip} contentInsetAdjustmentBehavior="automatic" >
+            <ScrollView onScroll={loadMoreTrip} contentInsetAdjustmentBehavior="automatic" style={{marginBottom: 130}}>
                 <RefreshControl onRefresh={() => loadTrips()}/>
                 {loading && <ActivityIndicator/>}
                 {trips.map(t => <TouchableOpacity key={t.id} onPress={() => toTripDetail(t.id)}>

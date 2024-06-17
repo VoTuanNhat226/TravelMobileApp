@@ -74,7 +74,7 @@ export default StyleSheet.create({
         borderRadius: 40,
         marginTop: 15,
         marginBottom: 5,
-        marginRight: 5
+        marginRight: 5,
     },
     cmtFlex: {
         flexDirection: 'row',
@@ -109,12 +109,44 @@ export default StyleSheet.create({
         
         marginLeft: 20
     },
-    like : {
-        fontSize: 20,
-        fontWeight: 'bold',
-        backgroundColor: 'cyan',
-        width: 60,
-        height: 40,
-        textAlign: 'center'
+    iconContainer: {
+        flexDirection: 'row',
+        justifyContent: 'flex-end',
+        alignItems: 'center',
+        width: '100%',
+      },
+
+    iconButton: {
+        width: 50,
+        height: 50,
+        marginLeft: 10,
+    },
+
+    menuBox: {
+        backgroundColor: '#fff',
+        borderWidth: 1,
+        borderColor: '#ccc',
+        borderRadius: 4,
+        padding: 8,
+        zIndex: 1,
+      },
+    menuOption: {
+        paddingVertical: 4,
+    },
+    container: {
+        flex: 1,
+      },
+    backdrop: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: 100,
+        height: 100,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    body: {
+
     }
 })

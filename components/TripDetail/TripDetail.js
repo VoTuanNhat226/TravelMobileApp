@@ -1,12 +1,12 @@
 
 import React, { useContext, useEffect, useRef, useState } from 'react'
-import { ActivityIndicator, Alert, Image, KeyboardAvoidingView, Platform, RefreshControl, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { ActivityIndicator, Alert, Image, KeyboardAvoidingView, Platform, RefreshControl, ScrollView, Text, TextInput, TouchableOpacity, View,  TouchableWithoutFeedback } from 'react-native'
 import APIs, { authAPI, endpoints } from '../../configs/APIs'
 import TripDetailStyle from './TripDetailStyle'
 import Style from '../../Style/Style'
 import { useNavigation } from '@react-navigation/native'
 import UserStyle from '../User/UserStyle'
-import { Button, Icon } from 'react-native-paper'
+import { Button, Icon, Modal, PaperProvider, Portal } from 'react-native-paper'
 import moment from 'moment'
 import { MyUserContext } from '../../configs/Context'
 import AsyncStorage from '@react-native-async-storage/async-storage'
@@ -14,17 +14,13 @@ import Checkbox from 'expo-checkbox'
 
 const TripDetail = ({route}) => {
     const tripId = route.params?.tripId
-    const [tripDetail, setTripDetail] = useState(null)
-    const [comments, setComments] = useState([])
-    const [comment, setComment] = useState('')
-    const [content, setContent] = useState('')
     const [isChecked, setIsChecked] = useState(false)
     const [checkedItems, setCheckedItems] = useState([]);
     const [isLiked, setIsLiked] = useState(false)
     const nav = useNavigation()
     const commentInputRef = useRef(null);
     const user = useContext(MyUserContext)
-
+    
     
     const [showPar, setShowPar] = useState(false);
     const togglePar = () => {
@@ -34,24 +30,26 @@ const TripDetail = ({route}) => {
     const togglePlace = () => {
         setShowPlace(!showPlace);
     };
-
+    
     //Load TripDetail
+    const [tripDetail, setTripDetail] = useState(null)
     const loadTripDetail = async () => {
         try {
             let res = await APIs.get(endpoints['tripsDetail'](tripId))
             setTripDetail(res.data)
             } catch (error) {
-            console.error(error)
+                console.error(error)
+            }
         }
-    }
-    useEffect(() => {
-        loadTripDetail()
-    },[tripId])
-
-    //Load Comments
-    const loadComments = async () => {
-        try {
-            let res = await APIs.get(endpoints['comments'](tripId))
+        useEffect(() => {
+            loadTripDetail()
+        },[tripId])
+        
+        //Load Comments
+        const [comments, setComments] = useState([])
+        const loadComments = async () => {
+            try {
+                let res = await APIs.get(endpoints['comments'](tripId))
             setComments(res.data)
         } catch (error) {
             console.error(error)
@@ -60,11 +58,9 @@ const TripDetail = ({route}) => {
     useEffect(() => {
         loadComments()
     }, [])
-
-    // const handlePlaceDetail = (placeId) => {
-    //         nav.navigate('Places', {'placeId' : placeId})
-    // }
-
+    
+    const [comment, setComment] = useState('')
+    const [content, setContent] = useState('')
     const addComments = async () => {
         try {
             if(user) {
@@ -113,19 +109,48 @@ const TripDetail = ({route}) => {
         }
     }
 
-    const handleLike = async (tripID) => {
+
+    // const checkLiked = async (tripID) => {
+    //     try {
+    //         const acessToken = await AsyncStorage.getItem("access-token");
+    //         const response = await APIs.get(endpoints['check_liked'](tripID), {
+    //             headers: {
+    //                 Authorization: `Bearer ${acessToken}`
+    //             }
+    //         });
+    //         if (response.data.liked == true) {
+               
+    //             setIsLiked(true);
+    //         } else {
+    //             setIsLiked(false);
+    //         }
+    //         console.log(isLiked)
+    //     } catch (error) {
+    //         console.error("Lỗi khi kiểm tra trạng thái 'liked':", error);
+    //     }
+    // };
+
+    const handleLike = async (tripId) => {
       try {
         if (user) {
             try {
                 setIsLiked(!isLiked)
                 let acessToken = await AsyncStorage.getItem("acess-token")
                 let res = await authAPI(acessToken).post(endpoints['like'](tripId), {
-                    'liked': isLiked
+                    headers: {
+                        Authorization: `Bearer ${acessToken}`
+                    }
                 })
                 console.log(isLiked)
-            } catch (error) {
-                console.error(error)
-            }
+                if (isLiked) {
+                    setIsLiked(false);
+                } else {
+                    setIsLiked(true);
+                }
+                    
+                } catch (error) {
+                    console.error(error)
+                }
         } else {
             Alert.alert(
                 'Notification',
@@ -144,22 +169,112 @@ const TripDetail = ({route}) => {
       }
     }
     
+    const handleDeleteTrip = async (tripId) => {
+       try {
+        Alert.alert(
+            'Warning!',
+            'Are you sure you want to delete this trip?',
+            [
+              { text: 'Cancel', onPress: () => nav.navigate('Detail', {'tripId': tripId})},
+              { text: 'Delete', onPress: async () => {
+                let acessToken = await AsyncStorage.getItem("acess-token")
+                let res = await authAPI(acessToken).delete(endpoints['tripsDetail'](tripId), {
+                headers: {
+                    Authorization: `Bearer ${acessToken}`
+                }
+                })
+                if(res.status === 204) {
+                    Alert.alert('Notification', 'Delete trip successful')
+                    nav.navigate('Trip')
+                }
+              }},
+            ],
+            { cancelable: false }
+          );
+            
+       } catch (error) {
+            console.error(error)
+       }
+    };
 
+    const handleUpdateTrip = async (tripId) => {
+        try {
+            nav.navigate('UpdateTrip', {'tripId': tripId})
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
+    const [reportLetter, setReportLetter] = useState({})
+    const handleReport = async (authUser, userID) => {
+        try {
+            Alert.prompt(
+                'REPORT',
+                'Please enter your reporting reason below',
+                [
+                  {
+                    text: 'Cancel',
+                    onPress: () => console.log('Cancel report'),
+                    style: 'cancel',
+                  },
+                  {
+                    text: 'OK',
+                    onPress: async (reason) => {
+                        if(reason===null || reason.trim() === '') {
+                            Alert.alert('Error', 'You must provide a reason for the report.');
+                        }
+                        let formReport = new FormData()
+                        formReport.append('reason', reason)
+                        let acessToken = await AsyncStorage.getItem("acess-token")
+                        let res = await authAPI(acessToken).post(endpoints['report'](userID), formReport,{
+                        headers: {
+                            "Content-Type": "multipart/form-data",
+                            Authorization: `Bearer ${acessToken}`
+                        }
+                        })
+                        if (res.status === 200) {
+                            Alert.alert('Notification', 'Report success')
+                        }
+                    }
+                  },
+                ],
+                'plain-text',
+              );
+            
+        } catch (error) {
+            console.error(error)
+        }
+    }
+    
     return (
-        <View>
+        <View style={TripDetailStyle.body}>
             <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
                 <ScrollView style={TripDetailStyle.margin}>
-                           
                         <View>
                             {tripDetail===null? <ActivityIndicator/> : <>
-                                <View>
-                                <TouchableOpacity style={{width: 50, height: 50}} onPress={handleLike}>
+                            <View style={TripDetailStyle.iconContainer}>                              
+                                <TouchableOpacity style={TripDetailStyle.iconButton} onPress={() => handleLike(tripDetail.id)}>
                                     <Icon
                                         source="heart"
                                         color={isLiked ? "#FF0000" : "#C0C0C0"}
                                         size={50}
                                     />
                                 </TouchableOpacity>
+                                <View>
+                                    {user && user.id === tripDetail.user.id && (
+                                            <TouchableOpacity style={TripDetailStyle.iconButton} onPress={() => handleDeleteTrip(tripDetail.id)}>
+                                                <Icon source="delete" color="red" size={50} />
+                                            </TouchableOpacity>
+                                    )}
+                                </View>
+                                <View>
+                                    {user && user.id === tripDetail.user.id && (
+                                            <TouchableOpacity style={TripDetailStyle.iconButton} onPress={() => handleUpdateTrip(tripDetail.id)}>
+                                                <Icon source="pencil" color="red" size={50} />
+                                            </TouchableOpacity>
+                                    )}
+                                </View>
+
                             </View>
 
                                     {/* Hình và title Trip */}
@@ -243,6 +358,13 @@ const TripDetail = ({route}) => {
                                         <View>
                                             <View>
                                                 <View style={TripDetailStyle.cmtFlex} key={c.id} >
+                                                  {tripDetail===null?<></>:<>
+                                                    {user && user.id !== c.user.id && (
+                                                        <TouchableOpacity style={{marginTop: 5, marginRight: 10}} onPress={() => handleReport(user, c.user.id)}>
+                                                          <Icon source="alert" color="gold" size={25}/>
+                                                        </TouchableOpacity>
+                                                    )}
+                                                  </>}
                                                     <Image style={TripDetailStyle.cmtAvatar} source={{uri: c.user.avatar}}/>
                                                     <View>
                                                         <View style={TripDetailStyle.cmtFlex}>
@@ -256,7 +378,7 @@ const TripDetail = ({route}) => {
                                                 </View>
                                             </View>
                                             {tripDetail===null?<></>: <>
-                                                {user && user.id === tripDetail.user.id && (
+                                                {user && user.id !== c.user.id && (
                                                 <View>
                                                     <Checkbox key={c.user.id} value={isChecked} onValueChange={() => setIsChecked(!isChecked)} style={TripDetailStyle.cmtCheck} color='#444444'/>
                                                 </View>

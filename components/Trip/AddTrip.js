@@ -165,7 +165,7 @@ const AddTrip = () => {
           // formTrip.append('place', place);
           console.log(formTrip)
         let acessToken = await AsyncStorage.getItem("acess-token")
-        let res = await authAPI(acessToken).post(endpoints['trips'], formTrip, {
+        let res = await authAPI(acessToken).post(endpoints['add_trip'], formTrip, {
             headers: {
               'Content-Type': 'multipart/form-data',
               //  Authorization: `Bearer ${acessToken}`
