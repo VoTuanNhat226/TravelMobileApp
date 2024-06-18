@@ -141,9 +141,9 @@ const TripDetail = ({route}) => {
             console.error("Lỗi khi kiểm tra trạng thái 'liked':", error);
         }
     };
-    // useEffect(() => {
-    //     checkLiked(tripDetail.id)
-    // })
+    useEffect(() => {
+        checkLiked(tripId)
+    })
     const handleLike = async (tripId) => {
       try {
         if (user) {
