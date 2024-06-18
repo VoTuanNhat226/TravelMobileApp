@@ -198,11 +198,7 @@ const TripDetail = ({route}) => {
     };
 
     const handleUpdateTrip = async (tripId) => {
-        try {
             nav.navigate('UpdateTrip', {'tripId': tripId})
-        } catch (error) {
-            console.error(error)
-        }
     }
 
     const [reportLetter, setReportLetter] = useState({})
@@ -222,18 +218,19 @@ const TripDetail = ({route}) => {
                     onPress: async (reason) => {
                         if(reason===null || reason.trim() === '') {
                             Alert.alert('Error', 'You must provide a reason for the report.');
-                        }
-                        let formReport = new FormData()
-                        formReport.append('reason', reason)
-                        let acessToken = await AsyncStorage.getItem("acess-token")
-                        let res = await authAPI(acessToken).post(endpoints['report'](userID), formReport,{
-                        headers: {
-                            "Content-Type": "multipart/form-data",
-                            Authorization: `Bearer ${acessToken}`
-                        }
-                        })
-                        if (res.status === 200) {
-                            Alert.alert('Notification', 'Report success')
+                        } else {
+                            let formReport = new FormData()
+                            formReport.append('reason', reason)
+                            let acessToken = await AsyncStorage.getItem("acess-token")
+                            let res = await authAPI(acessToken).post(endpoints['report'](userID), formReport,{
+                            headers: {
+                                "Content-Type": "multipart/form-data",
+                                Authorization: `Bearer ${acessToken}`
+                            }
+                            })
+                            if (res.status === 200) {
+                                Alert.alert('Notification', 'Report successful')
+                            }
                         }
                     }
                   },
@@ -362,6 +359,13 @@ const TripDetail = ({route}) => {
                                                     {user && user.id !== c.user.id && (
                                                         <TouchableOpacity style={{marginTop: 5, marginRight: 10}} onPress={() => handleReport(user, c.user.id)}>
                                                           <Icon source="alert" color="gold" size={25}/>
+                                                        </TouchableOpacity>
+                                                    )}
+                                                  </>}
+                                                  {tripDetail===null?<></>:<>
+                                                    {user && user.id === c.user.id && (
+                                                        <TouchableOpacity style={{marginTop: 5, marginRight: 10}}>
+                                                          <Icon source="alpha-x-box" color="red" size={25}/>
                                                         </TouchableOpacity>
                                                     )}
                                                   </>}

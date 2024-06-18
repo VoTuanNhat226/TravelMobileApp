@@ -65,7 +65,7 @@ const Login = () => {
             }, 100);
         } catch (error) {
             console.error(error)
-            Alert.alert('Warning', 'Invalid username or password')
+            Alert.alert('Warning', "Wrong username or password, or maybe you've been ban")
         } finally {
             setLoading(false)
         }

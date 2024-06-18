@@ -39,9 +39,39 @@ const AddTrip = () => {
     const [post, setPost] = useState(1);
     const [posts, setPosts] = useState([])
 
-    const [client, setClient] = useState([])
+    const [client, setClient] = useState([
+      {
+        "id": 1,
+        "first_name": "Trần",
+        "last_name": "Duy",
+        "email": "justvnn0507@gmail.com",
+        "username": "admin",
+        "avatar": "http://res.cloudinary.com/dxxwcby8l/image/upload/v1718089169/s3wljivfdqdg8ebd1zze.jpg"
+      },
+    {
+        "id": 6,
+        "first_name": "Son Duy",
+        "last_name": "Tran",
+        "email": "sonduy@gmail.com",
+        "username": "sonduy",
+        "avatar": "http://res.cloudinary.com/dxxwcby8l/image/upload/v1717080626/tavea99kflxgeq9r0c8c.jpg"
+    }
+    ])
     
-    const [place, setPlace] = useState([]);
+    const [place, setPlace] = useState([
+      {
+        "id": 1,
+        "title": "Yongin",
+        "image": "http://res.cloudinary.com/dxxwcby8l/image/upload/v1716781486/hb1bjxhhfzydssnpqk3d.png",
+        "created_date": "2024-05-27 03:44:46"
+    },
+    {
+        "id": 2,
+        "title": "Nampodong Market",
+        "image": "http://res.cloudinary.com/dxxwcby8l/image/upload/v1717114762/dkqior8f2ligd07ebmbe.webp",
+        "created_date": "2024-05-31 00:19:22"
+    },
+    ]);
     const [places, setPlaces] = useState([])
     
     const [loading, setLoading] = useState(false)
@@ -151,24 +181,24 @@ const AddTrip = () => {
       try {
         let formTrip = new FormData()
           formTrip.append('title', title);
-          // formTrip.append('image', {
-          //   uri: selectedImage,
-          //   name: image.image.name,
-          //   type: image.image.type
-          // })
-          // formTrip.append('description', description);
-          // formTrip.append('time_start', timeStart);
-          // formTrip.append('time_finish', timeFinish);
-          // formTrip.append('user', userAuth);
-          formTrip.append('post', post);
-          // formTrip.append('client', client);
-          // formTrip.append('place', place);
+          formTrip.append('image', {
+            uri: selectedImage,
+            name: image.image.name,
+            type: image.image.type
+          })
+          formTrip.append('description', description);
+          formTrip.append('time_start', timeStart);
+          formTrip.append('time_finish', timeFinish);
+          // formTrip.append('user', userAuth.id);
+          formTrip.append('post_id', post);
+          formTrip.append('client', client);
+          formTrip.append('place', place);
           console.log(formTrip)
         let acessToken = await AsyncStorage.getItem("acess-token")
         let res = await authAPI(acessToken).post(endpoints['add_trip'], formTrip, {
             headers: {
               'Content-Type': 'multipart/form-data',
-              //  Authorization: `Bearer ${acessToken}`
+               Authorization: `Bearer ${acessToken}`
             }
           })
           if (res.status === 201) {

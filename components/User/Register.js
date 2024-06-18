@@ -132,6 +132,7 @@ const Register = () => {
               right={<TextInput.Icon icon={f.icon} />}
             ></TextInput>
           ))}
+          
           <TouchableRipple onPress={picker} style={UserStyle.header}>
             <Text style={UserStyle.btnPickAvatar}>Choose avatar...</Text>
           </TouchableRipple>
