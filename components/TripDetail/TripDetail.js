@@ -53,10 +53,22 @@ const TripDetail = ({route}) => {
             setComments(res.data)
         } catch (error) {
             console.error(error)
+        }}
+        //Load Ratings
+        const [ratings, setRatings] = useState([])
+        const loadRatings = async () => {
+            try {
+                let res = await APIs.get(endpoints['ratings'](tripId))
+                setRatings(res.data)
+        } catch (error) {
+            console.error(error)
         }
     }
     useEffect(() => {
         loadComments()
+    }, [])
+    useEffect(() => {
+        loadRatings()
     }, [])
     
     const [comment, setComment] = useState('')
@@ -242,7 +254,136 @@ const TripDetail = ({route}) => {
             console.error(error)
         }
     }
+
+    const handleDeleteComment = async (tripId, commentId) => {
+        try {
+         Alert.alert(
+             'Warning!',
+             'Are you sure you want to delete this comment?',
+             [
+               { text: 'Cancel', onPress: () => nav.navigate('Detail', {'tripId': tripId})} ,
+               { text: 'Delete', onPress: async () => {
+                 let acessToken = await AsyncStorage.getItem("acess-token")
+                 let res = await authAPI(acessToken).delete(endpoints['delete_comment'](tripId, commentId))
+                 console.log(tripId, commentId)
+                 if(res.status === 204) {
+                     Alert.alert('Notification', 'Delete comment successful')
+                     nav.navigate('Detail',  {'tripId': tripId})
+                 }
+                 else 
+                    Alert.alert('Notification', 'Delete comment unsuccessful')
+               }},
+             ],
+             { cancelable: false }
+           );
+             
+        } catch (error) {
+             console.error(error)
+        }
+     };
+
+     const handleEditComment = async (tripId,commentId) => {
+        try {
+            Alert.prompt(
+                'Edit Comment',
+                'Please enter your new comment',
+                [
+                  {
+                    text: 'Cancel',
+                    onPress: () => console.log('Cancel edit'),
+                    style: 'cancel',
+                  },
+                  {
+                    text: 'OK',
+                    onPress: async (content) => {
+                        if(content===null || content.trim() === '') {
+                            Alert.alert('Error', 'You must provide a comment.');
+                        } else {
+                            setComment((prevState) => ({
+                                ...prevState,
+                                content: content,
+                              }));
+                            let acessToken = await AsyncStorage.getItem("acess-token")
+                            let res = await authAPI(acessToken).patch(endpoints['edit_comment'](tripId, commentId), comment,{
+                            headers: {
+                                "Content-Type": "multipart/form-data",
+                                Authorization: `Bearer ${acessToken}`
+                            }
+                            })
+                            if (res.status === 200) {
+                                Alert.alert('Notification', 'Edit Comment Successfully')
+                            }
+                            else {
+                                Alert.alert('Notification', 'Edit Comment Unsuccessfully')
+                            }
+                        }
+                    }
+                  },
+                ],
+                'plain-text',
+              );
+            
+        } catch (error) {
+            console.error(error)
+        }
+     };
+
+     const handleDeletePlace = async (tripId, placeId) => {
+        try {
+         Alert.alert(
+             'Warning!',
+             'Are you sure you want to delete this place?',
+             [
+               { text: 'Cancel', onPress: () => nav.navigate('Detail', {'tripId': tripId})} ,
+               { text: 'Delete', onPress: async () => {
+                 let acessToken = await AsyncStorage.getItem("acess-token")
+                 let res = await authAPI(acessToken).delete(endpoints['delete_place'](tripId, placeId))
+                 if(res.status === 204) {
+                     Alert.alert('Notification', 'Delete place successful')
+                     nav.navigate('Detail',  {'tripId': tripId})
+                 }
+                 else 
+                    Alert.alert('Notification', 'Delete place unsuccessful')
+               }},
+             ],
+             { cancelable: false }
+           );
+             
+        } catch (error) {
+             console.error(error)
+        }
+     };
+
+     const handleDeleteRating = async (tripId, ratingId) => {
+        try {
+         Alert.alert(
+             'Warning!',
+             'Are you sure you want to delete this rating?',
+             [
+               { text: 'Cancel', onPress: () => nav.navigate('Detail', {'tripId': tripId})} ,
+               { text: 'Delete', onPress: async () => {
+                 let acessToken = await AsyncStorage.getItem("acess-token")
+                 let res = await authAPI(acessToken).delete(endpoints['delete_rating'](tripId, ratingId))
+                 if(res.status === 204) {
+                     Alert.alert('Notification', 'Delete rating successful')
+                     nav.navigate('Detail',  {'tripId': tripId})
+                 }
+                 else 
+                    Alert.alert('Notification', 'Delete rating unsuccessful')
+               }},
+             ],
+             { cancelable: false }
+           );
+             
+        } catch (error) {
+             console.error(error)
+        }
+     };
     
+    const handleAddPlace = (tripId) => {
+        nav.navigate('AddPlace', {'tripId': tripId})
+    }
+
     return (
         <View style={TripDetailStyle.body}>
             <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
@@ -305,6 +446,7 @@ const TripDetail = ({route}) => {
                             {tripDetail===null? <ActivityIndicator/> : <>
                                 <View key={tripDetail.user.id} style={TripDetailStyle.flex}>
                                         <View>
+        
                                             <Text style={[TripDetailStyle.title, TripDetailStyle.name]}>{tripDetail.user.last_name} {tripDetail.user.first_name}</Text>
                                             <Text>{tripDetail.user.email}</Text>
                                         </View>
@@ -320,14 +462,27 @@ const TripDetail = ({route}) => {
                     <View style={TripDetailStyle.line}></View>
                         <View>
                             {tripDetail===null? <ActivityIndicator/> : <>
-                            <TouchableOpacity onPress={togglePlace}>
-                                <Text style={TripDetailStyle.title}>Explore & Tours</Text>
-                            </TouchableOpacity>
+                           <View style={TripDetailStyle.flex}>
+                                <TouchableOpacity onPress={togglePlace}>
+                                    <Text style={TripDetailStyle.title}>Explore & Tours</Text>
+                                </TouchableOpacity>
+                                {user && user.id === tripDetail.user.id && (
+                                    <TouchableOpacity style={{marginTop: 5, marginRight: 5, marginBottom: -10}} onPress={() => handleAddPlace(tripId)}> 
+                                        <Icon source="plus-box" color="green" size={40}/>
+                                    </TouchableOpacity>
+                                )}
+                           </View>
                             {showPlace && (
-                                <View>
+                                <View style={{marginTop: 10}}>
+                                    
                                     {tripDetail.place.map(c => (
                                     <View style={TripDetailStyle.flex}>
-                                        <View>
+                                        <View style={TripDetailStyle.flex}>
+                                        {user && user.id === tripDetail.user.id && (
+                                                        <TouchableOpacity style={{marginTop: 15, marginRight: 5}} onPress={() => handleDeletePlace(tripDetail.id, c.id)}> 
+                                                          <Icon source="alpha-x-box" color="red" size={20}/>
+                                                        </TouchableOpacity>
+                                        )}
                                             <TouchableOpacity onPress={() => handlePlaceDetail(c.id)}>
                                                 <Text style={[TripDetailStyle.parName]}>{c.title}</Text>
                                                 <Text>{c.created_date?moment(c.created_date).fromNow():""}</Text>
@@ -362,9 +517,9 @@ const TripDetail = ({route}) => {
                                                         </TouchableOpacity>
                                                     )}
                                                   </>}
-                                                  {tripDetail===null?<></>:<>
+                                                  {tripDetail===null? <></>:<>
                                                     {user && user.id === c.user.id && (
-                                                        <TouchableOpacity style={{marginTop: 5, marginRight: 10}}>
+                                                        <TouchableOpacity style={{marginTop: 5, marginRight: 10}} onPress={() => handleDeleteComment(tripDetail.id, c.id)}> 
                                                           <Icon source="alpha-x-box" color="red" size={25}/>
                                                         </TouchableOpacity>
                                                     )}
@@ -382,16 +537,82 @@ const TripDetail = ({route}) => {
                                                 </View>
                                             </View>
                                             {tripDetail===null?<></>: <>
-                                                {user && user.id !== c.user.id && (
-                                                <View>
-                                                    <Checkbox key={c.user.id} value={isChecked} onValueChange={() => setIsChecked(!isChecked)} style={TripDetailStyle.cmtCheck} color='#444444'/>
-                                                </View>
-                                           )}
+                                                {user && user.id === c.user.id &&  (
+                                                    <View>
+                                                        <TouchableOpacity style={TripDetailStyle.cmtCheck} onPress={() => handleEditComment(tripDetail.id, c.id)}> 
+                                                          <Icon source="pencil" color="black" size={25}/>
+                                                        </TouchableOpacity>
+                                                    </View>
+                                                )}                               
+                                                
                                             </>}
+                                            {tripDetail===null?<></>: <>
+                                                {tripDetail.client.map(u => (
+                                                    <View key={u.id}>
+                                                        {user && user.id !== c.user.id && c.user.id !== u.id && (
+                                                        <View>
+                                                            <Checkbox key={c.user.id} value={isChecked} onValueChange={() => setIsChecked(!isChecked)} style={TripDetailStyle.cmtCheck} color='#444444'/>
+                                                        </View>
+                                                        )}
+                                                    </View>
+                                                ))}
+                                                
+                                            </>}
+                                            
                                         </View>
                                     </>)}
                                 </View>
                             </View>
+
+                            {/* Rating */}
+                            <View style={TripDetailStyle.line}></View>
+                            <View>
+                                {/* <RefreshControl onRefresh={() => loadComments()}/> */}
+                                <Text style={TripDetailStyle.title}>Ratings</Text>
+                                <View>
+                                    {ratings.map((c) => <>
+                                        <View>
+                                            <View style={{marginTop: 20}}>
+                                                <View style={TripDetailStyle.cmtFlex} key={c.id} >
+                                                  {tripDetail===null?<></>:<>
+                                                    {user && user.id !== c.rating_user.id && (
+                                                        <TouchableOpacity style={{marginTop: 5, marginRight: 10}} onPress={() => handleReport(user, c.rating_user.id)}>
+                                                          <Icon source="alert" color="gold" size={25}/>
+                                                        </TouchableOpacity>
+                                                    )}
+                                                  </>}
+                                                  {tripDetail===null? <></>:<>
+                                                    {user && user.id === c.rating_user.id && (
+                                                        <TouchableOpacity style={{marginTop: 5, marginRight: 10}} onPress={() => handleDeleteRating(tripDetail.id, c.id)}> 
+                                                          <Icon source="alpha-x-box" color="red" size={25}/>
+                                                        </TouchableOpacity>
+                                                    )}
+                                                  </>}
+                                                    <Image style={TripDetailStyle.ratingAvatar} source={{uri: c.rating_user.avatar}}/>
+                                                    <View>
+                                                        <View style={TripDetailStyle.cmtFlex}>
+                                                            <Text style={TripDetailStyle.cmtName}>{c.rating_user.last_name} {c.rating_user.first_name}</Text>
+                                                            <Text style={TripDetailStyle.cmtCreateDate}>{c.created_date?moment(c.created_date).fromNow():""}</Text>
+                                                        </View>
+                                                        <View>
+                                                            <Text style={TripDetailStyle.cmtContent}>{c.content}</Text>
+                                                        </View>  
+                                                                                                   
+                                                    </View> 
+                                                </View>
+                                                <View>
+                                                        <Image style={TripDetailStyle.ratingImg} source={{uri: c.image}}/>
+                                                </View> 
+                                            </View>
+
+                                        </View>
+                                    </>)}
+                                </View>
+                            </View>
+
+
+
+                            
                 </ScrollView>
             </KeyboardAvoidingView>
         </View>

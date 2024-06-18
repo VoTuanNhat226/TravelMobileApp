@@ -76,6 +76,19 @@ export default StyleSheet.create({
         marginBottom: 5,
         marginRight: 5,
     },
+    ratingAvatar : {
+        width: 40,
+        height: 40,
+        borderRadius: 40,
+        alignItems: 'flex-end',
+        marginBottom: 5,
+        marginRight: 5,
+    },
+    ratingImg: {
+        width: 400,
+        height: 200,
+        marginLeft: 0
+    },
     cmtFlex: {
         flexDirection: 'row',
         alignItems: 'center',

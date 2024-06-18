@@ -8,7 +8,7 @@ export const endpoints = {
     'trips': '/trips/',
     'add_trip':'/trips/add_trip/',
     'tripsDetail': (tripId) => `/trips/${tripId}/`,
-    'getTripOnwer': (userId) => `/users/${userId}/get_trips/`,
+    'getTripOwner': (userId) => `/users/${userId}/get_trips/`,
     'places': '/places/',
     'comments': (tripId) => `/trips/${tripId}/get_comments/`,
     'postComment': (tripId) => `/trips/${tripId}/comments/`,
@@ -19,7 +19,13 @@ export const endpoints = {
     'like': (tripId) => `/trips/${tripId}/like/`,
     'check_liked' : (tripId) => `/trips/${tripId}/check_liked/`,
     'ratings' :(tripId) => `trips/${tripId}/ratings/`,
-    'report': (userId) => `/users/${userId}/report/`
+    'report': (userId) => `/users/${userId}/report/`,
+    'delete_comment': (tripId, commentId) => `/trips/${tripId}/comments/${commentId}/delete/`,
+    'delete_place': (tripId, placeId) => `/trips/${tripId}/places/${placeId}/delete/`,
+    'delete_rating': (tripId, ratingId) => `/trips/${tripId}/ratings/${ratingId}/delete/`,
+    'edit_comment' : (tripId, commentId) => `/trips/${tripId}/comments/${commentId}/partial-update/`,
+    'edit_place' : (tripId, placeId) => `/trips/${tripId}/places/${placeId}/partial-update/`,
+    'addPlace': (tripId) => `/trips/${tripId}/places/`
 }   
 
 export const authAPI = (accessToken) => {
