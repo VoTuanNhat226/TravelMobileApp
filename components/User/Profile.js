@@ -11,71 +11,69 @@ import moment from 'moment'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
 const Profile = () => {
-    const user = useContext(MyUserContext)
-    const dispatch = useContext(MyDispatchContext)
-    const [trips, setTrips] = useState(null)
-    const nav = useNavigation()
-
-
-    const handleLoadTrip = async (userId) => {
-      try {
-        let acessToken = await AsyncStorage.getItem("acess-token")
-        let res = await authAPI(acessToken).get(endpoints['getTripOwner'](userId))
-
-        if (res.status === 200) {
-          setTrips(res.data)
-          console.log(trips)
-        }
-        else{
-          Alert.alert('Warning', 'No Trip')
-        }
-      }catch(error){
-        console.log(error)
-      }
-      
-     
+  const user = useContext(MyUserContext)
+  const dispatch = useContext(MyDispatchContext)
+  const [trips, setTrips] = useState([])
+  const nav = useNavigation()
+  const loadTrip = async (userId) => {
+    // try {
+    //   let acessToken = await AsyncStorage.getItem("acess-token")
+    //   let res = await authAPI(acessToken).get(endpoints['getTripOwner'](userId))
+    //   setTrips(res.data)
+    //   console.log(trips)
+    // } catch(error){
+    //   console.log(error)
+    // }
+    try {
+      let acessToken = await AsyncStorage.getItem("acess-token")
+      let res = await authAPI(acessToken).get(endpoints['trips'])
+      setTrips(res.data.results)
+    } catch (error) {
+      console.error(error)
     }
-    const loadTrip = async () => {
-      let res = await APIs.get(endpoints['trips'])
-    }
-    useEffect(() => {
-      loadTrip()
-    },[])
-    // useEffect(() => {
-    //   loadTrip()
-    // },[])
+  }
+  useEffect(() => {
+    loadTrip()
+  },[])
 
-    const toTripDetail = (tripId) => {
-      nav.navigate('Detail', {'tripId': tripId})
-    }
+  const toTripDetail = (tripId) => {
+    nav.navigate('Detail', {'tripId': tripId})
+  }
   return (
     <View style={UserStyle.marginTop}>
       <View>
           <Text style={UserStyle.headerProfile}>Profile</Text>
       </View>
       <ScrollView>
+        {/* Avatar */}
         <View>
             <Image style={UserStyle.profileAvatar} source={{uri: user.avatar}}/>
         </View>
+        {/* Tên user */}
         <Text style={UserStyle.nameUser}>{user.last_name} {user.first_name}</Text>
+        {/* Button đăng xuất */}
         <View>
-          <Button icon="logout" onPress={() => dispatch({"type": "logout"})}>ĐĂNG XUẤT</Button>
+          <Button style={UserStyle.btnLogin} icon="logout" onPress={() => dispatch({"type": "logout"})}>ĐĂNG XUẤT</Button>
         </View>
-        <View style={TripDetailStyle.flex}>
+        {/* Your trip */}
+        <View style={{flex: 1,justifyContent: 'center'}}>
           <Text style={[TripDetailStyle.title, {marginLeft:20} ]}>Your trip:</Text>
-          <TouchableOpacity style={{marginTop: 5, marginRight: 10}} onPress={() => handleLoadTrip(user.id)}>
+          {/* <TouchableOpacity style={{marginTop: 5, marginRight: 10}} onPress={() => loadTrip()}>
             <Icon source="eye" color="black" size={25}/>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
+          <View style={{marginTop: 0}}>
           {trips === null ? <></>:<>
             {trips.map(t => <>
               {user.id === t.user.id?<>
-                <TouchableOpacity key={t.id}>
+                <TouchableOpacity key={t.user.id} onPress={() => toTripDetail(t.id)}>
                   <List.Item title={t.title} description={t.created_date?moment(t.created_date).fromNow():""} left={() => <Image style={UserStyle.yourTripImg} source={{uri: t.image}}/>}/>
                 </TouchableOpacity>
               </>:<>
               </>}
             </>)}
           </>}
+          </View>
+         
         </View>
       </ScrollView>
     </View>

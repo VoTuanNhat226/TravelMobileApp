@@ -86,7 +86,7 @@ export default StyleSheet.create({
         width: 100,
         height: 100,
         marginLeft: 20,
-        marginTop: 20,
+        marginTop: 0,
         borderRadius: 10
     }
 })
