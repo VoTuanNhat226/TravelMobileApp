@@ -122,26 +122,28 @@ const TripDetail = ({route}) => {
     }
 
 
-    // const checkLiked = async (tripID) => {
-    //     try {
-    //         const acessToken = await AsyncStorage.getItem("access-token");
-    //         const response = await APIs.get(endpoints['check_liked'](tripID), {
-    //             headers: {
-    //                 Authorization: `Bearer ${acessToken}`
-    //             }
-    //         });
-    //         if (response.data.liked == true) {
+    const checkLiked = async (tripID) => {
+        try {
+            const acessToken = await AsyncStorage.getItem("access-token");
+            const response = await APIs.get(endpoints['check_liked'](tripID), {
+                headers: {
+                    Authorization: `Bearer ${acessToken}`
+                }
+            });
+            if (response.data.liked == true) {
                
-    //             setIsLiked(true);
-    //         } else {
-    //             setIsLiked(false);
-    //         }
-    //         console.log(isLiked)
-    //     } catch (error) {
-    //         console.error("Lỗi khi kiểm tra trạng thái 'liked':", error);
-    //     }
-    // };
-
+                setIsLiked(true);
+            } else {
+                setIsLiked(false);
+            }
+            console.log(isLiked)
+        } catch (error) {
+            console.error("Lỗi khi kiểm tra trạng thái 'liked':", error);
+        }
+    };
+    // useEffect(() => {
+    //     checkLiked(tripDetail.id)
+    // })
     const handleLike = async (tripId) => {
       try {
         if (user) {
