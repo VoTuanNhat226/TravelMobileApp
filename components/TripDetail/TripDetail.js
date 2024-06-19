@@ -278,6 +278,14 @@ const TripDetail = ({route}) => {
             nav.navigate('UpdateTrip', {'tripId': tripId})
     }
 
+    const toPlaceDetail = (placeId) => {
+        nav.navigate('PlaceDetail', {'placeId': placeId})
+    }
+
+    const toEditTrip = () => {
+        nav.navigate('UpdateTrip', {'tripId': tripId})
+    }
+
     const [reportLetter, setReportLetter] = useState({})
     const handleReport = async (authUser, userID) => {
         try {
@@ -578,7 +586,7 @@ const TripDetail = ({route}) => {
                                                           <Icon source="alpha-x-box" color="red" size={20}/>
                                                         </TouchableOpacity>
                                         )}
-                                            <TouchableOpacity onPress={() => handlePlaceDetail(c.id)}>
+                                            <TouchableOpacity onPress={() => toPlaceDetail(c.id)}>
                                                 <Text style={[TripDetailStyle.parName]}>{c.title}</Text>
                                                 <Text>{c.created_date?moment(c.created_date).fromNow():""}</Text>
                                             </TouchableOpacity>
@@ -644,7 +652,7 @@ const TripDetail = ({route}) => {
                                             {tripDetail===null?<></>: <>
                                                 {tripDetail.client.map(u => (
                                                     <View key={u.id}>
-                                                        {user && user.id !== c.user.id && c.user.id !== u.id && (
+                                                        {user && user.id === tripDetail.user.id && c.user.id !== tripDetail.user.id && (
                                                         <View>
                                                             <Checkbox key={c.user.id} value={isChecked} onValueChange={() => setIsChecked(!isChecked)} style={TripDetailStyle.cmtCheck} color='#444444'/>
                                                         </View>

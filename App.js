@@ -16,6 +16,7 @@ import Register from "./components/User/Register";
 import Profile from "./components/User/Profile";
 import Places from "./components/Places/Places"
 import AddPlace from "./components/Places/AddPlace"
+import PlaceDetail from "./components/Places/PlaceDetail"
 
 import { MyDispatchContext, MyUserContext } from "./configs/Context";
 import MyUserReducer from "./configs/Reducers";
@@ -32,6 +33,7 @@ const MyStack = () => {
       <Stack.Screen name="UpdateTrip" component={UpdateTrip} />     
       <Stack.Screen name="Login" component={Login} />     
       <Stack.Screen name="AddPlace" component={AddPlace} />     
+      <Stack.Screen name="PlaceDetail" component={PlaceDetail} />     
     </Stack.Navigator>
   );
 };
