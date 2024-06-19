@@ -6,11 +6,14 @@ import TripDetailStyle from './TripDetailStyle'
 import Style from '../../Style/Style'
 import { useNavigation } from '@react-navigation/native'
 import UserStyle from '../User/UserStyle'
-import { Button, Icon, Modal, PaperProvider, Portal } from 'react-native-paper'
+import TripStyle from '../Trip/TripStyle'
+import { Button, Icon, Modal, PaperProvider, Portal , TouchableRipple} from 'react-native-paper'
 import moment from 'moment'
 import { MyUserContext } from '../../configs/Context'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import Checkbox from 'expo-checkbox'
+import * as ImagePicker from "expo-image-picker";
+import { Picker } from '@react-native-picker/picker'
 
 const TripDetail = ({route}) => {
     const tripId = route.params?.tripId
@@ -18,7 +21,8 @@ const TripDetail = ({route}) => {
     const [checkedItems, setCheckedItems] = useState([]);
     const [isLiked, setIsLiked] = useState(false)
     const nav = useNavigation()
-    const commentInputRef = useRef(null);
+    const commentInputRef = useRef(null)
+    const ratingInputRef = useRef(null);
     const user = useContext(MyUserContext)
     
     
@@ -122,6 +126,65 @@ const TripDetail = ({route}) => {
     }
 
 
+
+    const [rating, setRating] = useState('')
+    const [ratingContent, setRatingContent] = useState('')
+    const addRatings = async () => {
+        try {
+            if(user) {
+                if (!rating) {
+                    Alert.alert('Notification', 'There are no ratings yet');
+                    return;
+                } else {
+                    try {
+                        let formRating = new FormData()
+                        formRating.append('content', ratingContent);
+                        formRating.append('image', {
+                          uri: selectedImage,
+                          name: image.image.name,
+                          type: image.image.type
+                        })
+
+                       
+                        let acessToken = await AsyncStorage.getItem("acess-token")
+                        let res = await authAPI(acessToken).post(endpoints['ratings'](tripId), formRating, 
+                                {headers: {
+                                    'Content-Type': 'multipart/form-data',
+                                     Authorization: `Bearer ${acessToken}`
+                                  }}
+                        )
+                        setRatings(current => {
+                            return [res.data, ...current]
+                        })
+                        setRatingContent('')
+                       console.info(res.data)
+                       // Focus vào TextInput sau khi thêm rating thành công
+                       ratingInputRef.current.focus();
+                    } catch (error) {
+                        console.error(error)
+                        Alert.alert('Warning!', error.message )
+                    }
+                }
+
+            } else {
+                Alert.alert(
+                'Notification',
+                'You need to login.',
+                [
+                    {
+                    text: 'OK',
+                    onPress: () => nav.navigate('Login'),
+                    },
+                ],
+                { cancelable: false }
+                );
+            }
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
+
     const checkLiked = async (tripID) => {
         try {
             const acessToken = await AsyncStorage.getItem("access-token");
@@ -141,9 +204,9 @@ const TripDetail = ({route}) => {
             console.error("Lỗi khi kiểm tra trạng thái 'liked':", error);
         }
     };
-    useEffect(() => {
-        checkLiked(tripId)
-    })
+    // useEffect(() => {
+    //     checkLiked(tripId)
+    // })
     const handleLike = async (tripId) => {
       try {
         if (user) {
@@ -303,8 +366,10 @@ const TripDetail = ({route}) => {
                         } else {
                             setComment((prevState) => ({
                                 ...prevState,
-                                content: content,
+                                'content': content,
+                                
                               }));
+                            console.log(comment)
                             let acessToken = await AsyncStorage.getItem("acess-token")
                             let res = await authAPI(acessToken).patch(endpoints['edit_comment'](tripId, commentId), comment,{
                             headers: {
@@ -385,6 +450,34 @@ const TripDetail = ({route}) => {
     const handleAddPlace = (tripId) => {
         nav.navigate('AddPlace', {'tripId': tripId})
     }
+
+    const [image, setImage] = useState({})
+    const [selectedImage, setSelectedImage] = useState({}); 
+    const [choosePic, setChoosePic] = useState(false)
+    const picker = async () => {
+        const {status} = await ImagePicker.requestMediaLibraryPermissionsAsync()
+          if (status !== 'granted') 
+              Alert.alert("TripApp", "Permissions Denied!")
+          else {
+              let res = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.Images,
+              })
+              if (!res.canceled){
+                setSelectedImage(res.assets[0].uri)
+                changeImage("image", {
+                  uri: res.assets[0].uri,
+                  type: res.assets[0].type,
+                  name: res.assets[0].fileName
+                })
+              }
+              setChoosePic(true)
+          }
+      };
+      const changeImage = (field, value) => {
+        setImage((current) => {
+          return { ...current, [field]: value };
+        });
+      };
 
     return (
         <View style={TripDetailStyle.body}>
@@ -571,6 +664,24 @@ const TripDetail = ({route}) => {
                             <View>
                                 {/* <RefreshControl onRefresh={() => loadComments()}/> */}
                                 <Text style={TripDetailStyle.title}>Ratings</Text>
+                                <View style={TripDetailStyle.flex}>
+                                            <TextInput value={ratingContent} onChangeText={t => {setRatingContent(t), setRating(t)}}  ref={ratingInputRef} style={TripDetailStyle.ratingInput}></TextInput>
+                                            <View>
+                                                <View style={TripStyle.ratingChooseAvatar}>
+                                                <TouchableRipple onPress={picker} style={UserStyle.header}>
+                                                            <Text>Pic</Text>
+                                                </TouchableRipple>
+                                                </View>
+                                                {choosePic && 
+                                                    <View style={{width: 300, height: 200, borderWidth: 1, borderColor: '#444444', marginLeft: -220}}>
+                                                    <Image style={TripStyle.ratingTrip} source={{uri: selectedImage}}/>
+                                                    </View>
+                                                }
+                                            </View>
+                                            <TouchableOpacity onPress={addRatings} style={TripDetailStyle.cmtSend}>
+                                                <Text style={{paddingLeft: 10, color: '#333333'}} >Send</Text>
+                                            </TouchableOpacity>
+                                        </View>
                                 <View>
                                     {ratings.map((c) => <>
                                         <View>

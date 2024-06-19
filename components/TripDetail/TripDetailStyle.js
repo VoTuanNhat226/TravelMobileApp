@@ -52,7 +52,15 @@ export default StyleSheet.create({
     cmtInput: {
         marginTop: 10,
         paddingLeft: 15,
-        width: 300,
+        width: 280,
+        height: 40,
+        borderWidth: 1,
+        borderRadius: 5
+    },
+    ratingInput: {
+        marginTop: 10,
+        paddingLeft: 15,
+        width: 220,
         height: 40,
         borderWidth: 1,
         borderRadius: 5
@@ -61,7 +69,7 @@ export default StyleSheet.create({
         marginTop: 10,
         marginRight: 5,
         paddingTop: 10,
-        width: 60,
+        width: 50,
         height: 40,
         backgroundColor: '#BBBBBB',
         borderWidth: 1,

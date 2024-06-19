@@ -58,19 +58,23 @@ const Profile = () => {
         {/* Your trip */}
         <View style={{flex: 1,justifyContent: 'center'}}>
           <Text style={[TripDetailStyle.title, {marginLeft:20} ]}>Your trip:</Text>
-          {/* <TouchableOpacity style={{marginTop: 5, marginRight: 10}} onPress={() => loadTrip()}>
-            <Icon source="eye" color="black" size={25}/>
-          </TouchableOpacity> */}
+          
           <View style={{marginTop: 0}}>
-          {trips === null ? <></>:<>
+          {trips === null ? <>
+          </>:<>
             {trips.map(t => <>
               {user.id === t.user.id?<>
                 <TouchableOpacity key={t.user.id} onPress={() => toTripDetail(t.id)}>
                   <List.Item title={t.title} description={t.created_date?moment(t.created_date).fromNow():""} left={() => <Image style={UserStyle.yourTripImg} source={{uri: t.image}}/>}/>
                 </TouchableOpacity>
               </>:<>
-              </>}
+              
+              </>
+              }
             </>)}
+          
+
+            
           </>}
           </View>
          

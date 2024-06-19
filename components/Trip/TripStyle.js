@@ -72,5 +72,22 @@ export default StyleSheet.create({
         marginBottom: 10, 
         borderRadius: 20, 
         backgroundColor: '#DDDDDD'
-    }
+    },
+
+    ratingChooseAvatar: {
+        width: 50, 
+        height: 45, 
+        borderWidth: 1, 
+        borderColor: '#BBBBBB',
+        marginTop: 5, 
+        marginLeft: 15, 
+        marginBottom: 10, 
+        borderRadius: 10, 
+        backgroundColor: '#DDDDDD'
+    },
+    ratingTrip: {
+        width: 300,
+        height: 200, 
+        margin: 'auto'
+    },
 })

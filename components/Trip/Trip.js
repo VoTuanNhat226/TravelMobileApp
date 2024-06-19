@@ -15,6 +15,7 @@ const Trip = ({navigation}) => {
     const [postID, setPostID] = useState("")
     const [page, setPage] = useState(1);
     const user = useContext(MyUserContext)
+    const [searchValue, setSearchValue] = useState('');
 
     const loadPosts = async () => {
         try {
@@ -69,6 +70,35 @@ const Trip = ({navigation}) => {
         callback(value);
     }
 
+    
+
+    const handleSearch = async () => {
+
+        let res = await APIs.get(`${endpoints['trips']}?title=${q}`);
+
+        // Thực hiện các bước tìm kiếm dựa trên giá trị (value) được truyền vào
+        // Ví dụ: Gọi API để tìm kiếm các trip theo tên
+        // ...
+      
+        // Cập nhật state trips với kết quả tìm kiếm
+        setTrips(res.data.results); // searchResults là kết quả tìm kiếm (danh sách các trip) từ API hoặc xử lý logic tìm kiếm
+      }
+
+    useEffect(() => {
+        handleSearch()
+    }, [q])
+
+    const handleHideTrip = async (trip) => {
+        let res = await APIs.get(endpoints['hide_trip'](trip.id))
+    }
+    useEffect(() => {
+        trips.forEach((trip) => {
+          if (trip.active === true) {
+            handleHideTrip(trip);
+          }
+        });
+      }, [trips]);
+    
     const toTripDetail = (tripId) => {
         navigation.navigate('Detail', {'tripId': tripId})
     }
@@ -99,11 +129,11 @@ const Trip = ({navigation}) => {
 
     return (
         <View>
-            <View>
-                {posts===null?<></>:<>
-                    {posts.map((p) => <Chip style={TripStyle.postChip} key={p.id} onPress={() => search(p.id, setPostID)}></Chip>)}
+            {/* <View>
+                {trips===null?<></>:<>
+                    {trips.map((p) => <Chip style={TripStyle.postChip} key={p.id}></Chip>)}
                 </>}
-            </View>
+            </View> */}
             <TouchableOpacity onPress={toAddTrip} style={TripStyle.addTrip}>
                    {/* <Text style={{color: 'white', margin: 'auto', fontSize: 17}}>Create a trip</Text> */}
                    <Button icon='plus'><Text style={{color: 'white', margin: 'auto'}}>Create a trip</Text></Button>
@@ -114,9 +144,11 @@ const Trip = ({navigation}) => {
             <ScrollView onScroll={loadMoreTrip} contentInsetAdjustmentBehavior="automatic" style={{marginBottom: 130}}>
                 <RefreshControl onRefresh={() => loadTrips()}/>
                 {loading && <ActivityIndicator/>}
-                {trips.map(t => <TouchableOpacity key={t.id} onPress={() => toTripDetail(t.id)}>
-                                    <List.Item title={t.title} description={t.created_date?moment(t.created_date).fromNow():""} left={() => <Image style={TripStyle.img} source={{uri: t.image}}/>}/>
-                                </TouchableOpacity>)}
+                {trips.map(t => t.active === true ?(
+                    <TouchableOpacity key={t.id} onPress={() => toTripDetail(t.id)}>
+                        <List.Item title={t.title} description={t.created_date?moment(t.created_date).fromNow():""} left={() => <Image style={TripStyle.img} source={{uri: t.image}}/>}/>
+                    </TouchableOpacity>):null)
+                }
                 {loading && page > 1 && <ActivityIndicator/>}
             </ScrollView>
         </View>

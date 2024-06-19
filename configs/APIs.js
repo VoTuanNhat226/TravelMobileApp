@@ -18,14 +18,15 @@ export const endpoints = {
     'placeDetail': (placeID) => `/places/${placeID}/`,
     'like': (tripId) => `/trips/${tripId}/like/`,
     'check_liked' : (tripId) => `/trips/${tripId}/check_liked/`,
-    'ratings' :(tripId) => `trips/${tripId}/ratings/`,
+    'ratings' :(tripId) => `/trips/${tripId}/ratings/`,
     'report': (userId) => `/users/${userId}/report/`,
     'delete_comment': (tripId, commentId) => `/trips/${tripId}/comments/${commentId}/delete/`,
     'delete_place': (tripId, placeId) => `/trips/${tripId}/places/${placeId}/delete/`,
     'delete_rating': (tripId, ratingId) => `/trips/${tripId}/ratings/${ratingId}/delete/`,
     'edit_comment' : (tripId, commentId) => `/trips/${tripId}/comments/${commentId}/partial-update/`,
     'edit_place' : (tripId, placeId) => `/trips/${tripId}/places/${placeId}/partial-update/`,
-    'addPlace': (tripId) => `/trips/${tripId}/places/`
+    'addPlace': (tripId) => `/trips/${tripId}/places/`,
+    'hide_trip': (tripId) => `/trips/${tripId}/hide-trip/`
 }   
 
 export const authAPI = (accessToken) => {
