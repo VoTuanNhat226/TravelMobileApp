@@ -27,6 +27,18 @@ export default StyleSheet.create({
         paddingHorizontal: 20,
         outlineColor: 'transparent',
     },
+    textInputDescription: {
+        backgroundColor: '#EEEEEE',
+        marginTop: 15,
+        marginLeft: 20,
+        marginRight: 20,
+        borderWidth: 1,
+        borderColor: '#BBBBBB',
+        paddingHorizontal: 20,
+        outlineColor: 'transparent',
+        height: 'auto',
+        maxHeight: 72, // Chiều cao tối đa của TextInput
+    },
     btnRegister: {
         marginLeft: 20,
         marginRight: 20,

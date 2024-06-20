@@ -5,14 +5,15 @@ const BASE_URL = 'https://sonduy.pythonanywhere.com/'
 
 export const endpoints = {
     'posts': '/posts/',
+
     'trips': '/trips/',
     'add_trip':'/trips/add_trip/',
     'tripsDetail': (tripId) => `/trips/${tripId}/`,
-    'getTripOwner': (userId) => `/users/${userId}/get_trips/`,
-    'places': '/places/',
     'comments': (tripId) => `/trips/${tripId}/get_comments/`,
     'postComment': (tripId) => `/trips/${tripId}/comments/`,
+    'getTripOwner': (userId) => `/users/${userId}/get_trips/`,
     'register': '/users/',
+    'places': '/places/',
     'login': '/o/token/',
     'current_user': '/users/current_user/',
     'placeDetail': (placeID) => `/places/${placeID}/`,
@@ -28,7 +29,8 @@ export const endpoints = {
     'addPlace': (tripId) => `/trips/${tripId}/places/`,
     'hide_trip': (tripId) => `/trips/${tripId}/hide-trip/`,
     'account_list': `users/user_reported/`,
-    'block_account': (userId) => `users/${userId}/block_account/`
+    'block_account': (userId) => `users/${userId}/block_account/`,
+    'update_trip' : (tripId) => `/trips/${tripId}/`
 }   
 
 export const authAPI = (accessToken) => {
