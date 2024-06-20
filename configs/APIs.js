@@ -26,7 +26,9 @@ export const endpoints = {
     'edit_comment' : (tripId, commentId) => `/trips/${tripId}/comments/${commentId}/partial-update/`,
     'edit_place' : (tripId, placeId) => `/trips/${tripId}/places/${placeId}/partial-update/`,
     'addPlace': (tripId) => `/trips/${tripId}/places/`,
-    'hide_trip': (tripId) => `/trips/${tripId}/hide-trip/`
+    'hide_trip': (tripId) => `/trips/${tripId}/hide-trip/`,
+    'account_list': `users/user_reported/`,
+    'block_account': (userId) => `users/${userId}/block_account/`
 }   
 
 export const authAPI = (accessToken) => {

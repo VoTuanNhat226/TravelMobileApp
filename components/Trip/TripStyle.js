@@ -7,6 +7,18 @@ export default StyleSheet.create({
         borderRadius: 20,
         marginLeft: 20
     },
+    imgReport: {
+        width: 50,
+        height: 50,
+        borderRadius: 20,
+        marginLeft: 20
+    },
+    iconReport: {
+        width: 150,
+        height: 150,
+        borderRadius: 20,
+        marginLeft: 20
+    },
     p: {
         fontSize: 20
     },

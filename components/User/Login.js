@@ -9,7 +9,8 @@ import { Button, TextInput, TouchableRipple } from 'react-native-paper'
 import UserStyle from './UserStyle'
 import APIs, { endpoints, authAPI } from '../../configs/APIs'
 import { MyDispatchContext } from '../../configs/Context'
-
+import { signInWithEmailAndPassword } from 'firebase/auth'
+import { auth } from '../../configs/firebase'
 import { LogBox } from 'react-native';
 
 const Login = () => {
@@ -53,10 +54,13 @@ const Login = () => {
             console.info(res.data)
             await AsyncStorage.setItem('acess-token', res.data.access_token)
 
+            
+
             setTimeout(async () => {
                 let user = await authAPI(res.data.access_token).get(endpoints['current_user']);
-                console.info(user.data);
-
+                // console.info(user.data);
+                // console.log(user.data.username, user.data.password)
+                //await signInWithEmailAndPassword(auth, user.data.username, "123456")
                 dispatch({
                     "type": "login",
                     "payload": user.data

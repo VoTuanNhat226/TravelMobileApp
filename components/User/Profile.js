@@ -50,7 +50,7 @@ const Profile = () => {
             <Image style={UserStyle.profileAvatar} source={{uri: user.avatar}}/>
         </View>
         {/* Tên user */}
-        <Text style={UserStyle.nameUser}>{user.last_name} {user.first_name}</Text>
+        <Text style={UserStyle.nameUser}>{user.last_name} {user.first_name} {user.is_staff}</Text>
         {/* Button đăng xuất */}
         <View>
           <Button style={UserStyle.btnLogin} icon="logout" onPress={() => dispatch({"type": "logout"})}>ĐĂNG XUẤT</Button>

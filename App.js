@@ -17,6 +17,8 @@ import Profile from "./components/User/Profile";
 import Places from "./components/Places/Places"
 import AddPlace from "./components/Places/AddPlace"
 import PlaceDetail from "./components/Places/PlaceDetail"
+import ListAccount from "./components/User/ListAccount";
+import Chat from "./components/User/Chat";
 
 import { MyDispatchContext, MyUserContext } from "./configs/Context";
 import MyUserReducer from "./configs/Reducers";
@@ -34,6 +36,9 @@ const MyStack = () => {
       <Stack.Screen name="Login" component={Login} />     
       <Stack.Screen name="AddPlace" component={AddPlace} />     
       <Stack.Screen name="PlaceDetail" component={PlaceDetail} />     
+      <Stack.Screen name="ListAccount" component={ListAccount} />  
+      <Stack.Screen name="Chat" component={Chat} />  
+
     </Stack.Navigator>
   );
 };
@@ -50,12 +55,24 @@ const MyTab = () => {
       }}
     >
       <Tab.Screen name="Home" component={MyStack} options={{ title: "Home", tabBarIcon: () => <Icon size={30} color="#444444" source="home" />}} />
-      {user === null?<>
+      {user === null ?<>
         <Tab.Screen name="Register" component={Register} options={{ title: "Register", tabBarIcon: () => <Icon size={30} color="#444444" source="account" />}} />
         <Tab.Screen name="Login" component={Login} options={{title: "Login", tabBarIcon: () => <Icon size={30} color="#444444" source="login" />}} />
-      </>:<>
+      </>:
+      <>
+        <Tab.Screen name="Chat" component={Chat} options={{ title: "Chat", tabBarIcon: () => <Icon size={30} color="#444444" source="account" />}} />
         <Tab.Screen name="Profile" component={Profile} options={{ title: "Profile", tabBarIcon: () => <Icon size={30} color="#444444" source="account" />}} />
       </>}
+
+      {user !==null && user.is_staff===true?
+      <>
+      <Tab.Screen name="Report" component={ListAccount} options={{ title: "Report", tabBarIcon: () => <Icon size={30} color="#444444" source="alert" />}} />
+      </>
+      :
+      <></>
+      }
+
+     
     </Tab.Navigator>
   );
 };
