@@ -60,7 +60,7 @@ const Login = () => {
                 let user = await authAPI(res.data.access_token).get(endpoints['current_user']);
                 // console.info(user.data);
                 // console.log(user.data.username, user.data.password)
-                //await signInWithEmailAndPassword(auth, user.data.username, "123456")
+                await signInWithEmailAndPassword(auth, user.data.username, "123456")
                 dispatch({
                     "type": "login",
                     "payload": user.data
