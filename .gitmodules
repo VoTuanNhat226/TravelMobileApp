@@ -1,0 +1,3 @@
+[submodule "TravelMobileApp"]
+	path = TravelMobileApp
+	url = https://github.com/VoTuanNhat226/TravelMobileApp.git
